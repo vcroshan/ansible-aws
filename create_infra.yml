@@ -1,0 +1,16 @@
+---
+#Main Playbook
+# - name: Provision an EC2 Instance
+#   hosts: frontends
+#   gather_facts: false
+#   become: true
+#   tags: provisioning
+#   roles: ec2-prov
+
+
+ - hosts: localhost
+   connection: local
+   gather_facts: false
+   user: root
+   roles:
+    - ec2-prov
