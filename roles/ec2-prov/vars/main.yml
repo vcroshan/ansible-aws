@@ -4,7 +4,7 @@
 instance_type: "t2.micro"
 security_group: "Wipro_SG_Public_Webserver" # Change the security group name here
 #security_group: "wiproSG" # Change the security group name here
-image: "ami-76144b0a"  # This is an AMI i created myself
+image: "ami-07f0c9caec5449629"  # This is an AMI i created myself
 keypair: "wipro_devops" # This is one of my keys that i already have in AWS
 region: "ap-southeast-1" # Change the Region
 count: 1
