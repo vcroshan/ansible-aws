@@ -1,14 +1,15 @@
 ---
 # vars file for ec2-prov
 
-instance_type: t2.micro
-security_group: Wipro_SG_Public_Webserver # Change the security group name here
-image: ami-76144b0a  # This is an AMI i created myself
-keypair: wipro_devops # This is one of my keys that i already have in AWS
-region: ap-southeast-1 # Change the Region
+instance_type: "t2.micro"
+security_group: "Wipro_SG_Public_Webserver" # Change the security group name here
+#security_group: "wiproSG" # Change the security group name here
+image: "ami-76144b0a"  # This is an AMI i created myself
+keypair: "wipro_devops" # This is one of my keys that i already have in AWS
+region: "ap-southeast-1" # Change the Region
 count: 1
-Machine_Name: TomcatServer
-ec_url: https://703724776639.signin.aws.amazon.com/console
-aws_ac_key: AKIAIKLFBHHJPM574HTA
-aws_sec_key: Jnzt2xBLlmnZZy2lSFfN86JIKlRuVAbdauEweX
+Machine_Name: "TomcatServer"
+ec_url: "https://703724776639.signin.aws.amazon.com/console"
 ec2_volume_size: 16
+ec2_tag_Type: "TestServer"
+ec2_tag_Environment: "Test_POC"

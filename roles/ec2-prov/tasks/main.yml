@@ -1,34 +1,61 @@
 ---
 # tasks file for ec2-prov
  - name: Launch new EC2 Instance
-   ec2:
+   local_action:
+     module: ec2
+     aws_access_key: "{{ aws_ac_key }}"
+     aws_secret_key: "{{ aws_sec_key }}"
      key_name: "{{ keypair }}"
-     group_id: sg-096797fc3ce901c63
-     instance_type: "{{ instance_type}}"
+     group_id: 	sg-096797fc3ce901c63
+     instance_type: "{{ instance_type }}"
      image: "{{ image }}"
      vpc_subnet_id: subnet-0e3dde91a0167bb9c
      region: "{{ region }}"
-     instance_tags: '{"Name":"{{Machine_Name}}","Environment":"Test_POC"}'
+     instance_tags:
+        Name: "{{ Machine_Name }}"
+        Type: "{{ ec2_tag_Type }}"
+        Environment: "{{ ec2_tag_Environment }}"
      assign_public_ip: yes
-     wait: true
+     wait: yes
      count: "{{count}}"
      ec2_url: "{{ ec_url }}"
-     aws_access_key: "{{ aws_ac_key }}"
-     aws_secret_key: "{{ aws_sec_key }}"
-     volumes:
-       - device_name: /dev/sda1
-         volume_size: "{{ ec2_volume_size }}"
-         delete_on_termination: true
+     #volumes:
+     #  - device_name: /dev/sda1
+     #    volume_size: "{{ ec2_volume_size }}"
+     #    delete_on_termination: true
    register: ec2
 
+ - debug: var=item.public_ip
+   with_items: '{{ ec2.instances }}'
+
+ #- add_host: name={{ item.public_ip }} >
+ #             groups=tag_Type_{{ec2_tag_Type}},tag_Environment_{{ec2_tag_Environment}}
+ #             ec2_region={{region}}
+ #             ec2_tag_Name={{Machine_Name}}
+ #             ec2_tag_Type={{ec2_tag_Type}}
+ #             ec2_tag_Environment={{ec2_tag_Environment}}
+ #             ec2_ip_address={{item.public_ip}}
+ #  with_items:
+ #   - "{{ ec2.instances }}"
+
+ - name: Add the newly created EC2 instance(s) to the local host group (located inside the directory)
+   local_action: lineinfile
+                  dest="/opt/ansible/envpov/inventory/hosts"
+                  regexp='{{ item.public_ip }}'
+                  insertafter="[app_server]" line='{{ item.public_ip }}'
+   with_items: '{{ ec2.instances }}'
+
+ - name: Wait for the instances to boot by checking the ssh port
+   local_action: wait_for
+          host=item.public_ip
+          port=22
+          delay=60
+          timeout=320
+          state=started
+   with_items: '{{ ec2.instances }}'
 
 
- #- name: Add the newly created EC2 instance(s) to the local host group (located inside the directory)
- #  local_action: lineinfile
- #                dest="/opt/ansible/envpov/inventory/hosts"
- #                regexp={{ item.public_ip }}
- #                insertafter="[app_server]" line={{ item.public_ip }}
- #  with_items: ec2.instances
+
 
 
 
